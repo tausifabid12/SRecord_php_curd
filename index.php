@@ -1,6 +1,8 @@
 <?php
 
 $insert = false;
+$update = false;
+$delete = false;
 //INSERT INTO `srecord` (`sno`, `sname`, `sid`, `cname`, `stestimonial`, `edate`) VALUES ('1', 'Tausif Muftasin Abid', '2820044', 'Chemistry', 'Abid is vary good boy and a decent student.', current_timestamp());
 //Connect to the Database
 $servername = "localhost";
@@ -21,6 +23,15 @@ if(!$conn){
 // echo $_POST['snoEdit'];
 // echo $_GET['update'];
 // exit();
+
+
+
+if(isset($_GET['delete'])){
+     $sno = $_GET['delete'];
+    $delete = true;
+    $sql = "DELETE FROM `srecord` WHERE `srecord`.`sno` = $sno";
+    $result = mysqli_query($conn, $sql);
+}
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
 if(isset($_POST['snoEdit'])){
     
@@ -30,9 +41,12 @@ if(isset($_POST['snoEdit'])){
     $sid = $_POST['sidEdit'];
     $cname = $_POST['cnameEdit'];
     $Address = $_POST['addressEdit'];
-
+    //sql query to be excuted
     $sql = "UPDATE `srecord` SET `sname` = '$sname', `sid` = '$sid' , `cname` = '$cname', `stestimonial` = '$Address'  WHERE `srecord`.`sno` = $sno";
     $result = mysqli_query($conn, $sql);
+    if($result){
+        $update = true;
+    }
     
 }else{
 
@@ -166,8 +180,18 @@ if(isset($_POST['snoEdit'])){
              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
            </div>';
          }
-    
-    
+         if($update){
+             echo '<div class="alert alert-success alert-dismissible fade show" role="alert container mt-5" >
+             Your data has been Updated <strong>Successfully</strong>
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+           </div>';
+         }
+         if($delete){
+             echo '<div class="alert alert-success alert-dismissible fade show" role="alert container mt-5" >
+             Your data has been deleted <strong>Successfully</strong>
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+           </div>';
+         }
     ?>
 
     <div class="container mt-5 pt-5">
@@ -224,7 +248,8 @@ if(isset($_POST['snoEdit'])){
                                 <td>' . $row['sid'] .'</td>
                                 <td>' . $row['cname'] .'</td>
                                 <td>' . $row['stestimonial'] . '</td>
-                                <td>' . '<button class="btn btn-sm btn-success edit "  id= '. $row['sno'] .' data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>  <button class="btn btn-sm btn-success delete "  id= d'. $row['sno'] .'>Delete</button>'.'</td>
+                                <td>' . '<button class="btn btn-sm btn-success edit "  id= '. $row['sno'] .' data-bs-toggle="modal" data-bs-target="#editModal">Edit</button> 
+                                <button class="btn btn-sm btn-success delete"  id= d'. $row['sno'] .'>Delete</button>'.'</td>
                             </tr';
 
                             $sno = $sno + 1;
@@ -270,7 +295,7 @@ if(isset($_POST['snoEdit'])){
     </script>
 
     <script>
-        let edits = document.getElementsByClassName('edit');
+             let edits = document.getElementsByClassName('edit');
         Array.from(edits).forEach((element) => {
             element.addEventListener("click", (e) => {
                 console.log("edit ",);
@@ -287,31 +312,32 @@ if(isset($_POST['snoEdit'])){
                  snoEdit.value = e.target.id;
                  console.log(e.target.id);
 
-
-                
-                
-
             })
         });
+
+
 
 
         let deletes = document.getElementsByClassName('delete');
         Array.from(deletes).forEach((element) => {
             element.addEventListener("click", (e) => {
                 console.log("edit ",);
-               sno =e.target.id.substr(1,);
-
+                let sno = e.target.id.substr(1,)
+                
                 if(confirm("press a button")){
-                    console.log('yes')
-                    window.location = `/phpCurd_project/index.php?delete= ${sno}`;
+                    console.log("yes");
+                    window.location = `/phpCurd_project/index.php?delete=${sno}`;
                 }else{
-                    console.log('no')
-                }
-                
-                
+                    console.log("no");
+                };
+                 
 
             })
         });
+     
+       
+
+        
         </script>
 
 </html>
